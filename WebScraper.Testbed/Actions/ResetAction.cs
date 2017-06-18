@@ -1,11 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
-namespace WebScraper.Testbed
+﻿namespace WebScraper.Testbed.Actions
 {
+    using System;
+    using System.Threading.Tasks;
+
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Logging;
+
+    using WebScraper.Testbed.Data;
+
     internal class ResetAction : IDisposable
     {
         private readonly WebScraperContext m_dbContext;

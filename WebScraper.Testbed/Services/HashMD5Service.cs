@@ -4,13 +4,13 @@ using System.Text;
 
 using Microsoft.Extensions.Logging;
 
-namespace WebScraper.Testbed
+namespace WebScraper.Testbed.Services
 {
     internal class HashMD5Service : IHashService
     {
-        private readonly ILogger<RequestAction> m_logger;
+        private readonly ILogger<HashMD5Service> m_logger;
 
-        public HashMD5Service(ILogger<RequestAction> logger)
+        public HashMD5Service(ILogger<HashMD5Service> logger)
         {
             m_logger = logger;
         }

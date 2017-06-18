@@ -1,12 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Net.Http;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
-namespace WebScraper.Testbed
+﻿namespace WebScraper.Testbed.Actions
 {
+    using System;
+    using System.Threading.Tasks;
+    using System.Net.Http;
+
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Logging;
+
+    using WebScraper.Testbed.Data;
+    using WebScraper.Testbed.Services;
+
     internal class ServiceRequestsAction : IDisposable
     {
         private readonly WebScraperContext m_dbContext;

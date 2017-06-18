@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-
-
-namespace WebScraper.Testbed
+﻿namespace WebScraper.Testbed
 {
-    class AppConfiguration
-    {
-        public string Task { get; set; }
-        public string Url { get; set; }
-    }
+    using System;
+    using System.Collections.Generic;
+
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.EntityFrameworkCore;
+
+    using Actions;
+    using Data;
+    using Services;
 
     class Program
     {

@@ -1,8 +1,7 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace WebScraper.Testbed
+namespace WebScraper.Testbed.Data
 {
     class WebScraperContextFactory : IDbContextFactory<WebScraperContext>
     {
