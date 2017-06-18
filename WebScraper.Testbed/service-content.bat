@@ -1,1 +1,1 @@
-dotnet run --task service-content
+dotnet run --action service-content

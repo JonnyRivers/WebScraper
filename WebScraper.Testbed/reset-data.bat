@@ -1,1 +1,1 @@
-dotnet run --task reset
+dotnet run --action reset

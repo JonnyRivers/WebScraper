@@ -2,7 +2,7 @@
 {
     class AppConfiguration
     {
-        public string Task { get; set; }
+        public string Action { get; set; }
         public string Url { get; set; }
     }
 }

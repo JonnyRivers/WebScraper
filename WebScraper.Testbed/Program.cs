@@ -18,13 +18,13 @@
         {
             var inMemoryConfig = new Dictionary<string, string>
             {
-                {"Task", "reset"}
+                {"Action", "reset"}
             };
 
             var switchMappings = new Dictionary<string, string>
             {
-                {"--task", "Task"},
-                {"-t", "Task"},
+                {"--action", "Action"},
+                {"-a", "Action"},
                 {"--url", "Url"},
                 {"-u", "Url"}
             };
@@ -41,22 +41,22 @@
 
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
-            if (appConfiguration.Task == "reset")
+            if (appConfiguration.Action == "reset")
             {
                 ResetAction action = serviceProvider.GetService<ResetAction>();
                 return action.RunAsync().Result;
             }
-            else if (appConfiguration.Task == "request")
+            else if (appConfiguration.Action == "request")
             {
                 RequestAction action = serviceProvider.GetService<RequestAction>();
                 return action.RunAsync(appConfiguration.Url).Result;
             }
-            else if (appConfiguration.Task == "service-content")
+            else if (appConfiguration.Action == "service-content")
             {
                 ServiceContentAction action = serviceProvider.GetService<ServiceContentAction>();
                 return action.RunAsync().Result;
             }
-            else if (appConfiguration.Task == "service-requests")
+            else if (appConfiguration.Action == "service-requests")
             {
                 ServiceRequestsAction action = serviceProvider.GetService<ServiceRequestsAction>();
                 return action.RunAsync().Result;

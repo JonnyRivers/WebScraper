@@ -1,1 +1,1 @@
-dotnet run --task service-requests
+dotnet run --action service-requests

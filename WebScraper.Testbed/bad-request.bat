@@ -1,1 +1,1 @@
-dotnet run --task request --url www.theguardian.com/us
+dotnet run --action request --url www.theguardian.com/us
