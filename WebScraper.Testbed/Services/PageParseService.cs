@@ -13,6 +13,10 @@
                 throw new ArgumentNullException(nameof(contentData));
             }
 
+            string contentText = System.Text.Encoding.UTF8.GetString(contentData);
+
+            // parse the links
+
             throw new NotImplementedException();
         }
     }
