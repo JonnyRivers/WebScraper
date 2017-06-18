@@ -1,0 +1,19 @@
+﻿namespace WebScraper.Testbed.Services
+{
+    using System;
+
+    using WebScraper.Testbed.Content;
+
+    public class PageParseService : IPageParseService
+    {
+        public WebPageContent ParseWebPage(byte[] contentData)
+        {
+            if (contentData == null)
+            {
+                throw new ArgumentNullException(nameof(contentData));
+            }
+
+            throw new NotImplementedException();
+        }
+    }
+}
