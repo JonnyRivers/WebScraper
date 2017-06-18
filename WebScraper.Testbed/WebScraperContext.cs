@@ -10,7 +10,6 @@ namespace WebScraper.Testbed
         public WebScraperContext(DbContextOptions<WebScraperContext> options) : base(options) { }
 
         public DbSet<PageRequest> PageRequests { get; set; }
-        public DbSet<PageResult> PageResults { get; set; }
         public DbSet<Content> Content { get; set; }
     }
 
@@ -18,27 +17,20 @@ namespace WebScraper.Testbed
     {
         Pending,
         InProgress,
-        Done
+        Done,
+        Failed
     }
 
     public class PageRequest
     {
+        [Key]
         public int PageRequestId { get; set; }
         public string Url { get; set; }
         public Status Status { get; set; }
-        DateTime RequestedAt { get; set; }
-        DateTime? StartedAt { get; set; }
-        DateTime? CompletedAt { get; set; }
-    }
-
-    public class PageResult
-    {
-        public int PageResultId { get; set; }
-        public string Url { get; set; }
-        DateTime RequestedAt { get; set; }
-        DateTime StartedAt { get; set; }
-        DateTime CompletedAt { get; set; }
-        string ContentHash { get; set; }
+        public DateTime RequestedAt { get; set; }
+        public DateTime? StartedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
+        public string ContentHash { get; set; }
     }
 
     public class Content

@@ -13,6 +13,7 @@ namespace WebScraper.Testbed
     class AppConfiguration
     {
         public string Task { get; set; }
+        public string Url { get; set; }
     }
 
     class Program
@@ -21,13 +22,15 @@ namespace WebScraper.Testbed
         {
             var inMemoryConfig = new Dictionary<string, string>
             {
-                {"Task", "Initialize"}
+                {"Task", "reset"}
             };
 
             var switchMappings = new Dictionary<string, string>
             {
                 {"--task", "Task"},
-                {"-t", "Task"}
+                {"-t", "Task"},
+                {"--url", "Url"},
+                {"-u", "Url"}
             };
 
             var configurationBuilder = new ConfigurationBuilder();
@@ -42,8 +45,23 @@ namespace WebScraper.Testbed
 
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
-            App app = serviceProvider.GetService<App>();
-            return app.RunAsync().Result;
+            if (appConfiguration.Task == "reset")
+            {
+                ResetAction action = serviceProvider.GetService<ResetAction>();
+                return action.RunAsync().Result;
+            }
+            else if (appConfiguration.Task == "request")
+            {
+                RequestAction action = serviceProvider.GetService<RequestAction>();
+                return action.RunAsync(appConfiguration.Url).Result;
+            }
+            else if (appConfiguration.Task == "service-requests")
+            {
+                ServiceRequestsAction action = serviceProvider.GetService<ServiceRequestsAction>();
+                return action.RunAsync().Result;
+            }
+
+            return 1;
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
@@ -52,10 +70,14 @@ namespace WebScraper.Testbed
             serviceCollection.AddSingleton(loggerFactory);
             serviceCollection.AddLogging();
 
-            string connectionString = @"Server=(localdb)\mssqllocaldb;Database=WebScraper;Trusted_Connection=True;";
-            serviceCollection.AddDbContext<WebScraperContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<WebScraperContext>(
+                options => options.UseSqlServer(WebScraperContextFactory.ConnectionString));
 
-            serviceCollection.AddTransient<App>();
+            serviceCollection.AddTransient<IHashService, HashMD5Service>();
+
+            serviceCollection.AddTransient<ResetAction>();
+            serviceCollection.AddTransient<RequestAction>();
+            serviceCollection.AddTransient<ServiceRequestsAction>();
         }
     }
 }
