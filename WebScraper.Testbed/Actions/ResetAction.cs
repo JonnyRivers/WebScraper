@@ -28,7 +28,7 @@
         {
             m_dbContext.PageLinks.RemoveRange(m_dbContext.PageLinks);
             m_dbContext.Content.RemoveRange(m_dbContext.Content);
-            m_dbContext.PageRequests.RemoveRange(m_dbContext.PageRequests);
+            m_dbContext.Pages.RemoveRange(m_dbContext.Pages);
 
             await m_dbContext.SaveChangesAsync();
 

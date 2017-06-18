@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebScraper.Testbed.Data
 {
-    public class PageRequest
+    public class Page
     {
         [Key]
-        public int PageRequestId { get; set; }
+        public int PageId { get; set; }
         public string Url { get; set; }
         public Status Status { get; set; }
         public DateTime RequestedAt { get; set; }

@@ -26,14 +26,14 @@
 
         public async Task<int> RunAsync(string url)
         {
-            var pageRequest = new PageRequest
+            var pageRequest = new Page
             {
                 Url = url,
                 Status = Status.Pending,
                 RequestedAt = DateTime.UtcNow,
                 ContentHash = String.Empty
             };
-            await m_dbContext.PageRequests.AddAsync(pageRequest);
+            await m_dbContext.Pages.AddAsync(pageRequest);
 
             await m_dbContext.SaveChangesAsync();
 

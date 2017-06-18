@@ -8,6 +8,6 @@ namespace WebScraper.Testbed.Data
 
         public DbSet<Content> Content { get; set; }
         public DbSet<PageLink> PageLinks { get; set; }
-        public DbSet<PageRequest> PageRequests { get; set; }
+        public DbSet<Page> Pages { get; set; }
     }
 }

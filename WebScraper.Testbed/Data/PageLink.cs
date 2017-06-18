@@ -6,7 +6,7 @@ namespace WebScraper.Testbed.Data
     {
         [Key]
         public int PageLinkId { get; set; }
-        public int SourcePageRequestId { get; set; }
-        public int TargetPageRequestId { get; set; }
+        public int SourcePageId { get; set; }
+        public int TargetPageId { get; set; }
     }
 }
