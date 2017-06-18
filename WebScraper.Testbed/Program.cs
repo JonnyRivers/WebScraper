@@ -74,7 +74,9 @@
             serviceCollection.AddDbContext<WebScraperContext>(
                 options => options.UseSqlServer(WebScraperContextFactory.ConnectionString));
 
-            serviceCollection.AddTransient<IHashService, HashMD5Service>();
+            serviceCollection.AddTransient<IDataService, EFDataService>();
+            serviceCollection.AddTransient<IHashService, MD5HashService>();
+            serviceCollection.AddTransient<IHttpClientService, HttpClientService>();
 
             serviceCollection.AddTransient<ResetAction>();
             serviceCollection.AddTransient<RequestAction>();

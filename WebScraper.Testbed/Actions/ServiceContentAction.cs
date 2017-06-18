@@ -7,7 +7,6 @@ namespace WebScraper.Testbed.Actions
     using System;
     using System.Threading.Tasks;
 
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
     using WebScraper.Testbed.Data;
@@ -15,18 +14,18 @@ namespace WebScraper.Testbed.Actions
 
     internal class ServiceContentAction : IDisposable
     {
-        private readonly WebScraperContext m_dbContext;// TODO - make a data service
         private readonly ILogger<ServiceRequestsAction> m_logger;
+        private readonly IDataService m_dataService;
 
-        public ServiceContentAction(WebScraperContext dbContext, ILogger<ServiceRequestsAction> logger, IHashService hashService)
+        public ServiceContentAction(ILogger<ServiceRequestsAction> logger, IDataService dataService)
         {
-            m_dbContext = dbContext;
             m_logger = logger;
+            m_dataService = dataService;
         }
 
         public void Dispose()
         {
-            m_dbContext.Dispose();
+            m_dataService.Dispose();
         }
 
         public async Task<int> RunAsync()

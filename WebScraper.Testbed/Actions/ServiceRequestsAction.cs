@@ -3,8 +3,7 @@
     using System;
     using System.Threading.Tasks;
     using System.Net.Http;
-
-    using Microsoft.EntityFrameworkCore;
+    
     using Microsoft.Extensions.Logging;
 
     using WebScraper.Testbed.Data;
@@ -12,88 +11,69 @@
 
     internal class ServiceRequestsAction : IDisposable
     {
-        private readonly WebScraperContext m_dbContext;// TODO - make a data service
         private readonly ILogger<ServiceRequestsAction> m_logger;
+        private readonly IDataService m_dataService;
         private readonly IHashService m_hashService;
+        private readonly IHttpClientService m_httpClientService;
 
-        public ServiceRequestsAction(WebScraperContext dbContext, ILogger<ServiceRequestsAction> logger, IHashService hashService)
+        public ServiceRequestsAction(
+            ILogger<ServiceRequestsAction> logger, 
+            IDataService dataService, 
+            IHashService hashService,
+            IHttpClientService httpClientService)
         {
-            m_dbContext = dbContext;
             m_logger = logger;
+            m_dataService = dataService;
             m_hashService = hashService;
+            m_httpClientService = httpClientService;
         }
 
         public void Dispose()
         {
-            m_dbContext.Dispose();
+            m_dataService.Dispose();
         }
 
         public async Task<int> RunAsync()
         {
             while (true)
             {
-                Page nextPage = await m_dbContext.Pages
-                    .FirstOrDefaultAsync(x => x.Status == Status.Pending);
+                Page nextPage = await m_dataService.FirstOrDefaultPendingPageAsync();
+
                 if (nextPage != null)
                 {
-                    // TODO - offload blocks like this to a service?
-                    nextPage.StartedAt = DateTime.UtcNow;
-                    nextPage.Status = Status.Downloading;
-                    await m_dbContext.SaveChangesAsync();
+                    await m_dataService.UpdatePageDownloadingAsync(nextPage.PageId);
 
                     try
                     {
                         m_logger.LogInformation($"Processing request for {nextPage.Url}");
 
                         // get the content
-                        var client = new HttpClient();// todo - inject this
+                        HttpClient client = m_httpClientService.Create();
                         HttpResponseMessage response = client.GetAsync(nextPage.Url).Result;
 
                         if (response.IsSuccessStatusCode)
                         {
                             byte[] contentData = await response.Content.ReadAsByteArrayAsync();
-                            string hash = m_hashService.GenerateHash(contentData);
-
-                            // TODO - offload blocks like this to a service?
-                            Content contentRecord = await m_dbContext.Content.SingleOrDefaultAsync(x => x.Hash == hash);
-                            if (contentRecord == null)
+                            var contentRecord = new Content
                             {
-                                contentRecord = new Content
-                                {
-                                    Hash = hash,
-                                    Data = contentData
-                                };
+                                Hash = m_hashService.GenerateHash(contentData),
+                                Data = contentData
+                            };
 
-                                m_dbContext.Content.Add(contentRecord);
-                            }
+                            await m_dataService.EnsureContentAsync(contentRecord);
 
-                            // TODO - offload blocks like this to a service?
-                            nextPage.CompletedAt = DateTime.UtcNow;
-                            nextPage.Status = Status.Downloaded;
-                            nextPage.ContentHash = contentRecord.Hash;
-
-                            await m_dbContext.SaveChangesAsync();
+                            await m_dataService.UpdatePageDownloadedAsync(nextPage.PageId, contentRecord.Hash);
                         }
                         else
                         {
-                            // TODO - offload blocks like this to a service?
-                            nextPage.CompletedAt = DateTime.UtcNow;
-                            nextPage.Status = Status.DownloadFailed;
-                            nextPage.ContentHash = String.Empty;
-
-                            await m_dbContext.SaveChangesAsync();
+                            await m_dataService.UpdatePageDownloadFailedAsync(nextPage.PageId);
                         }
                     }
                     catch (Exception ex)
                     {
                         m_logger.LogError(ex.ToString());
 
-                        // TODO - offload blocks like this to a service?
-                        nextPage.CompletedAt = DateTime.UtcNow;
-                        nextPage.Status = Status.DownloadFailed;
-                        nextPage.ContentHash = String.Empty;
-
-                        await m_dbContext.SaveChangesAsync();
+                        await m_dataService.UpdatePageDownloadFailedAsync(nextPage.PageId);
                     }
                 }
                 else

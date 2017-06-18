@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace WebScraper.Testbed.Services
 {
-    internal class HashMD5Service : IHashService
+    internal class MD5HashService : IHashService
     {
-        private readonly ILogger<HashMD5Service> m_logger;
+        private readonly ILogger<MD5HashService> m_logger;
 
-        public HashMD5Service(ILogger<HashMD5Service> logger)
+        public MD5HashService(ILogger<MD5HashService> logger)
         {
             m_logger = logger;
         }

@@ -3,34 +3,29 @@
     using System;
     using System.Threading.Tasks;
 
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
-    using WebScraper.Testbed.Data;
+    using WebScraper.Testbed.Services;
 
     internal class ResetAction : IDisposable
     {
-        private readonly WebScraperContext m_dbContext;// TODO - make a data service
-        private readonly ILogger<ResetAction> m_logger;
+        private readonly ILogger<RequestAction> m_logger;
+        private readonly IDataService m_dataService;
 
-        public ResetAction(WebScraperContext dbContext, ILogger<ResetAction> logger)
+        public ResetAction(ILogger<RequestAction> logger, IDataService dataService)
         {
-            m_dbContext = dbContext;
             m_logger = logger;
+            m_dataService = dataService;
         }
 
         public void Dispose()
         {
-            m_dbContext.Dispose();
+            m_dataService.Dispose();
         }
 
         public async Task<int> RunAsync()
         {
-            m_dbContext.PageLinks.RemoveRange(m_dbContext.PageLinks);
-            m_dbContext.Content.RemoveRange(m_dbContext.Content);
-            m_dbContext.Pages.RemoveRange(m_dbContext.Pages);
-
-            await m_dbContext.SaveChangesAsync();
+            await m_dataService.ClearAllAsync();
 
             return 0;
         }
