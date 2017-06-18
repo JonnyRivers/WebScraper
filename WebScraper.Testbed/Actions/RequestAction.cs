@@ -10,7 +10,7 @@
 
     internal class RequestAction : IDisposable
     {
-        private readonly WebScraperContext m_dbContext;
+        private readonly WebScraperContext m_dbContext;// TODO - make a data service
         private readonly ILogger<RequestAction> m_logger;
 
         public RequestAction(WebScraperContext dbContext, ILogger<RequestAction> logger)

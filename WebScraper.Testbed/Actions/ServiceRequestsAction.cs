@@ -12,7 +12,7 @@
 
     internal class ServiceRequestsAction : IDisposable
     {
-        private readonly WebScraperContext m_dbContext;
+        private readonly WebScraperContext m_dbContext;// TODO - make a data service
         private readonly ILogger<ServiceRequestsAction> m_logger;
         private readonly IHashService m_hashService;
 
@@ -38,7 +38,7 @@
                 {
                     // TODO - offload blocks like this to a service?
                     nextPageRequest.StartedAt = DateTime.UtcNow;
-                    nextPageRequest.Status = Status.InProgress;
+                    nextPageRequest.Status = Status.Downloading;
                     await m_dbContext.SaveChangesAsync();
 
                     try
@@ -69,7 +69,7 @@
 
                             // TODO - offload blocks like this to a service?
                             nextPageRequest.CompletedAt = DateTime.UtcNow;
-                            nextPageRequest.Status = Status.Done;
+                            nextPageRequest.Status = Status.Downloaded;
                             nextPageRequest.ContentHash = contentRecord.Hash;
 
                             await m_dbContext.SaveChangesAsync();
@@ -78,7 +78,7 @@
                         {
                             // TODO - offload blocks like this to a service?
                             nextPageRequest.CompletedAt = DateTime.UtcNow;
-                            nextPageRequest.Status = Status.Failed;
+                            nextPageRequest.Status = Status.DownloadFailed;
                             nextPageRequest.ContentHash = String.Empty;
 
                             await m_dbContext.SaveChangesAsync();
@@ -90,7 +90,7 @@
 
                         // TODO - offload blocks like this to a service?
                         nextPageRequest.CompletedAt = DateTime.UtcNow;
-                        nextPageRequest.Status = Status.Failed;
+                        nextPageRequest.Status = Status.DownloadFailed;
                         nextPageRequest.ContentHash = String.Empty;
 
                         await m_dbContext.SaveChangesAsync();

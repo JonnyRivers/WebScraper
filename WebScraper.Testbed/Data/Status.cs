@@ -3,8 +3,11 @@
     public enum Status
     {
         Pending,
-        InProgress,
-        Done,
-        Failed
+        Downloading,
+        Downloaded,
+        DownloadFailed,
+        Parsing,
+        Parsed,
+        ParseFailed
     }
 }

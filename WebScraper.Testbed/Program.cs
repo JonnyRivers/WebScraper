@@ -51,6 +51,11 @@
                 RequestAction action = serviceProvider.GetService<RequestAction>();
                 return action.RunAsync(appConfiguration.Url).Result;
             }
+            else if (appConfiguration.Task == "service-content")
+            {
+                ServiceContentAction action = serviceProvider.GetService<ServiceContentAction>();
+                return action.RunAsync().Result;
+            }
             else if (appConfiguration.Task == "service-requests")
             {
                 ServiceRequestsAction action = serviceProvider.GetService<ServiceRequestsAction>();
@@ -73,6 +78,7 @@
 
             serviceCollection.AddTransient<ResetAction>();
             serviceCollection.AddTransient<RequestAction>();
+            serviceCollection.AddTransient<ServiceContentAction>();
             serviceCollection.AddTransient<ServiceRequestsAction>();
         }
     }

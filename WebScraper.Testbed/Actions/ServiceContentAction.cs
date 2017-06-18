@@ -1,4 +1,8 @@
-﻿namespace WebScraper.Testbed.Actions
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace WebScraper.Testbed.Actions
 {
     using System;
     using System.Threading.Tasks;
@@ -7,13 +11,14 @@
     using Microsoft.Extensions.Logging;
 
     using WebScraper.Testbed.Data;
+    using WebScraper.Testbed.Services;
 
-    internal class ResetAction : IDisposable
+    internal class ServiceContentAction : IDisposable
     {
         private readonly WebScraperContext m_dbContext;// TODO - make a data service
-        private readonly ILogger<ResetAction> m_logger;
+        private readonly ILogger<ServiceRequestsAction> m_logger;
 
-        public ResetAction(WebScraperContext dbContext, ILogger<ResetAction> logger)
+        public ServiceContentAction(WebScraperContext dbContext, ILogger<ServiceRequestsAction> logger, IHashService hashService)
         {
             m_dbContext = dbContext;
             m_logger = logger;
@@ -26,13 +31,9 @@
 
         public async Task<int> RunAsync()
         {
-            m_dbContext.PageLinks.RemoveRange(m_dbContext.PageLinks);
-            m_dbContext.Content.RemoveRange(m_dbContext.Content);
-            m_dbContext.PageRequests.RemoveRange(m_dbContext.PageRequests);
+            int result = await Task.Run<int>(() => { return 0; });
 
-            await m_dbContext.SaveChangesAsync();
-
-            return 0;
+            return result;
         }
     }
 }
