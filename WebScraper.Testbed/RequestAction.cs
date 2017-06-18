@@ -29,6 +29,7 @@ namespace WebScraper.Testbed
                 Url = url,
                 Status = Status.Pending,
                 RequestedAt = DateTime.UtcNow,
+                ContentHash = String.Empty
             };
             await m_dbContext.PageRequests.AddAsync(pageRequest);
 

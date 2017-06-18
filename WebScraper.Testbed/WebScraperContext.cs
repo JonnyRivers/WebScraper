@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebScraper.Testbed
 {
@@ -9,8 +10,9 @@ namespace WebScraper.Testbed
     {
         public WebScraperContext(DbContextOptions<WebScraperContext> options) : base(options) { }
 
-        public DbSet<PageRequest> PageRequests { get; set; }
         public DbSet<Content> Content { get; set; }
+        public DbSet<PageLink> PageLinks { get; set; }
+        public DbSet<PageRequest> PageRequests { get; set; }
     }
 
     public enum Status
@@ -31,6 +33,14 @@ namespace WebScraper.Testbed
         public DateTime? StartedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
         public string ContentHash { get; set; }
+    }
+
+    public class PageLink
+    {
+        [Key]
+        public int PageLinkId { get; set; }
+        public int SourcePageRequestId { get; set; }
+        public int TargetPageRequestId { get; set; }
     }
 
     public class Content
