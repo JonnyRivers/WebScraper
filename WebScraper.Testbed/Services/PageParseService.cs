@@ -5,10 +5,19 @@
     using System.IO;
     using System.Linq;
 
+    using Microsoft.Extensions.Logging;
+
     using WebScraper.Testbed.Content;
 
     public class PageParseService : IPageParseService
     {
+        private readonly ILogger<MD5HashService> m_logger;
+
+        public PageParseService(ILogger<MD5HashService> logger)
+        {
+            m_logger = logger;
+        }
+
         public WebPageContent ParseWebPage(Stream stream)
         {
             if (stream == null)

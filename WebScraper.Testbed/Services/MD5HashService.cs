@@ -1,12 +1,11 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
-
-using Microsoft.Extensions.Logging;
-
-namespace WebScraper.Testbed.Services
+﻿namespace WebScraper.Testbed.Services
 {
-    internal class MD5HashService : IHashService
+    using System.Security.Cryptography;
+    using System.Text;
+
+    using Microsoft.Extensions.Logging;
+
+    public class MD5HashService : IHashService
     {
         private readonly ILogger<MD5HashService> m_logger;
 
@@ -26,7 +25,7 @@ namespace WebScraper.Testbed.Services
                 var hashStringBuilder = new StringBuilder();
                 for (int i = 0; i < hashBytes.Length; i++)
                 {
-                    hashStringBuilder.Append(data[i].ToString("x2"));
+                    hashStringBuilder.Append(hashBytes[i].ToString("x2"));
                 }
 
                 string hashString = hashStringBuilder.ToString();
