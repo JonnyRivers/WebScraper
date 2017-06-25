@@ -1,1 +1,0 @@
-dotnet run --action request --url www.theguardian.com/us
