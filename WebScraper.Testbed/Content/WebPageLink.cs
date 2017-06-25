@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebScraper.Testbed.Content
+﻿namespace WebScraper.Testbed.Content
 {
     public class WebPageLink
     {
+        public string Value { get; }
+
+        public WebPageLink(string value)
+        {
+            Value = value;
+        }
     }
 }

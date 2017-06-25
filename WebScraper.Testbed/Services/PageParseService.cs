@@ -1,23 +1,36 @@
 ﻿namespace WebScraper.Testbed.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
 
     using WebScraper.Testbed.Content;
 
     public class PageParseService : IPageParseService
     {
-        public WebPageContent ParseWebPage(byte[] contentData)
+        public WebPageContent ParseWebPage(Stream stream)
         {
-            if (contentData == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException(nameof(contentData));
+                throw new ArgumentNullException(nameof(stream));
             }
 
-            string contentText = System.Text.Encoding.UTF8.GetString(contentData);
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc.Load(stream);
 
-            // parse the links
+            var linkNodes = new List<HtmlAgilityPack.HtmlNode>();
+            linkNodes.AddRange(doc.DocumentNode.Descendants("link"));
+            linkNodes.AddRange(doc.DocumentNode.Descendants("a"));
 
-            throw new NotImplementedException();
+            IEnumerable<string> hrefValues = linkNodes
+                .Select(e => e.GetAttributeValue("href", null))
+                .Where(v => !string.IsNullOrEmpty(v) && v.StartsWith("http", StringComparison.OrdinalIgnoreCase));
+            var hrefValueSet = new HashSet<string>(hrefValues);
+
+            IEnumerable<WebPageLink> webPageLinks = hrefValueSet.Select(h => new WebPageLink(h));
+
+            return new WebPageContent(webPageLinks);
         }
     }
 }

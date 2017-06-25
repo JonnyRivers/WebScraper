@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebScraper.Testbed.Content
+﻿namespace WebScraper.Testbed.Content
 {
+    using System.Collections.Generic;
+
     public class WebPageContent
     {
         public WebPageContent(IEnumerable<WebPageLink> links)

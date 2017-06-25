@@ -26,14 +26,24 @@
 
         public async Task<int> RunAsync(string url)
         {
-            var page = new Page
+            Page page = await m_dataService.FirstOrDefaultPageByUrlAsync(url);
+
+            if (page == null)
             {
-                Url = url,
-                Status = Status.Pending,
-                RequestedAt = DateTime.UtcNow,
-                ContentHash = String.Empty
-            };
-            await m_dataService.AddPageAsync(page);
+                page = new Page
+                {
+                    Url = url,
+                    Status = Status.Pending,
+                    RequestedAt = DateTime.UtcNow,
+                    ContentHash = String.Empty
+                };
+
+                await m_dataService.AddPageAsync(page);
+            }
+            else
+            {
+                await m_dataService.UpdatePagePendingAsync(page.PageId);
+            }
 
             return 0;
         }

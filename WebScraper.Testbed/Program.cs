@@ -77,6 +77,7 @@
             serviceCollection.AddTransient<IDataService, EFDataService>();
             serviceCollection.AddTransient<IHashService, MD5HashService>();
             serviceCollection.AddTransient<IHttpClientService, HttpClientService>();
+            serviceCollection.AddTransient<IPageParseService, PageParseService>();
 
             serviceCollection.AddTransient<ResetAction>();
             serviceCollection.AddTransient<RequestAction>();

@@ -1,9 +1,12 @@
 ﻿namespace WebScraper.Testbed.Services
 {
+    using System.IO;
+
     using WebScraper.Testbed.Content;
 
     public interface IPageParseService
     {
-        WebPageContent ParseWebPage(byte[] contentData);
+        // TODO - should this be async?
+        WebPageContent ParseWebPage(Stream stream);
     }
 }
