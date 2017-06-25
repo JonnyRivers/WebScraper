@@ -9,10 +9,10 @@
 
     internal class ResetAction : IDisposable
     {
-        private readonly ILogger<RequestAction> m_logger;
+        private readonly ILogger<MakeRequestAction> m_logger;
         private readonly IDataService m_dataService;
 
-        public ResetAction(ILogger<RequestAction> logger, IDataService dataService)
+        public ResetAction(ILogger<MakeRequestAction> logger, IDataService dataService)
         {
             m_logger = logger;
             m_dataService = dataService;

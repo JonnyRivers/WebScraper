@@ -46,9 +46,9 @@
                 ResetAction action = serviceProvider.GetService<ResetAction>();
                 return action.RunAsync().Result;
             }
-            else if (appConfiguration.Action == "request")
+            else if (appConfiguration.Action == "make-request")
             {
-                RequestAction action = serviceProvider.GetService<RequestAction>();
+                MakeRequestAction action = serviceProvider.GetService<MakeRequestAction>();
                 return action.RunAsync(appConfiguration.Url).Result;
             }
             else if (appConfiguration.Action == "service-content")
@@ -80,7 +80,7 @@
             serviceCollection.AddTransient<IPageParseService, PageParseService>();
 
             serviceCollection.AddTransient<ResetAction>();
-            serviceCollection.AddTransient<RequestAction>();
+            serviceCollection.AddTransient<MakeRequestAction>();
             serviceCollection.AddTransient<ServiceContentAction>();
             serviceCollection.AddTransient<ServiceRequestsAction>();
         }
