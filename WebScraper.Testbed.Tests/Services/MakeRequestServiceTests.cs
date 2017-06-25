@@ -28,8 +28,9 @@
                 service.MakeRequestAsync(url).Wait();
 
                 // Assert
-                int numPages = dbContext.Pages.CountAsync().Result;
-                Assert.AreEqual(1, numPages);
+                Assert.AreEqual(0, dbContext.Content.CountAsync().Result);
+                Assert.AreEqual(0, dbContext.PageLinks.CountAsync().Result);
+                Assert.AreEqual(1, dbContext.Pages.CountAsync().Result);
 
                 Page page = dbContext.Pages.FirstAsync().Result;
                 Assert.AreEqual(url, page.Url);
