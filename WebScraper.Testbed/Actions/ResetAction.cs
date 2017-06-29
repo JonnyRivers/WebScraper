@@ -5,7 +5,7 @@
 
     using Microsoft.Extensions.Logging;
 
-    using WebScraper.Testbed.Services;
+    using WebScraper.Testbed.Services.Application;
 
     internal class ResetAction : IDisposable
     {

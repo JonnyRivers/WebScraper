@@ -1,11 +1,11 @@
-﻿namespace WebScraper.Testbed.Tests.Services
+﻿namespace WebScraper.Testbed.Tests.Services.Application
 {
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using WebScraper.Testbed.Data;
-    using WebScraper.Testbed.Services;
+    using WebScraper.Testbed.Services.Application;
 
     [TestClass]
     public class MakeRequestServiceTests

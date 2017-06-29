@@ -1,4 +1,4 @@
-﻿namespace WebScraper.Testbed.Services
+﻿namespace WebScraper.Testbed.Services.Core
 {
     using System.Net.Http;
 

@@ -1,11 +1,11 @@
-﻿namespace WebScraper.Testbed.Tests.Services
+﻿namespace WebScraper.Testbed.Tests.Services.Core
 {
     using System.Text;
 
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    using WebScraper.Testbed.Services;
+    using WebScraper.Testbed.Services.Core;
 
     [TestClass]
     public class MD5HashServiceTests

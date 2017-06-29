@@ -1,4 +1,4 @@
-﻿namespace WebScraper.Testbed.Services
+﻿namespace WebScraper.Testbed.Services.Application
 {
     using System;
     using System.Collections.Generic;

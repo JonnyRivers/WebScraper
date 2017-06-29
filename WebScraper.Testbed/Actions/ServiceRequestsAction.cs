@@ -7,7 +7,8 @@
     using Microsoft.Extensions.Logging;
 
     using WebScraper.Testbed.Data;
-    using WebScraper.Testbed.Services;
+    using WebScraper.Testbed.Services.Core;
+    using WebScraper.Testbed.Services.Application;
 
     internal class ServiceRequestsAction : IDisposable
     {
