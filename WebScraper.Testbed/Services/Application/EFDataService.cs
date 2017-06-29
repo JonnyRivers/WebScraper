@@ -144,14 +144,5 @@
 
             await m_dbContext.SaveChangesAsync();
         }
-
-        public async Task ClearAllAsync()
-        {
-            m_dbContext.PageLinks.RemoveRange(m_dbContext.PageLinks);
-            m_dbContext.Content.RemoveRange(m_dbContext.Content);
-            m_dbContext.Pages.RemoveRange(m_dbContext.Pages);
-
-            await m_dbContext.SaveChangesAsync();
-        }
     }
 }

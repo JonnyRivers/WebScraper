@@ -27,7 +27,6 @@
 
         Task<byte[]> GetContentDataAsync(string hash);
 
-
         // Update - this all seems like state machine logic - is this a sensible location
         Task UpdatePagePendingAsync(int pageId);
         Task UpdatePageDownloadingAsync(int pageId);
@@ -36,8 +35,5 @@
         Task UpdatePageParsingAsync(int pageId);
         Task UpdatePageParsedAsync(int pageId);
         Task UpdatePageParseFailedAsync(int pageId);
-
-        // Delete
-        Task ClearAllAsync();
     }
 }
