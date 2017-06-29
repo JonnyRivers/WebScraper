@@ -41,6 +41,8 @@
 
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
+            ILogger logger = serviceProvider.GetService<ILogger>();
+
             if (appConfiguration.Action == "reset")
             {
                 ResetAction action = serviceProvider.GetService<ResetAction>();
@@ -48,8 +50,8 @@
             }
             else if (appConfiguration.Action == "make-request")
             {
-                MakeRequestAction action = serviceProvider.GetService<MakeRequestAction>();
-                return action.RunAsync(appConfiguration.Url).Result;
+                IMakeRequestService service = serviceProvider.GetService<IMakeRequestService>();
+                service.MakeRequestAsync(appConfiguration.Url).Wait();
             }
             else if (appConfiguration.Action == "service-content")
             {
@@ -61,8 +63,13 @@
                 ServiceRequestsAction action = serviceProvider.GetService<ServiceRequestsAction>();
                 return action.RunAsync().Result;
             }
+            else
+            {
+                logger.LogError($"Unrecognized action '{appConfiguration.Action}'");
+                return 1;
+            }
 
-            return 1;
+            return 0;
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
@@ -80,7 +87,6 @@
             serviceCollection.AddTransient<IPageParseService, PageParseService>();
 
             serviceCollection.AddTransient<ResetAction>();
-            serviceCollection.AddTransient<MakeRequestAction>();
             serviceCollection.AddTransient<ServiceContentAction>();
             serviceCollection.AddTransient<ServiceRequestsAction>();
         }
