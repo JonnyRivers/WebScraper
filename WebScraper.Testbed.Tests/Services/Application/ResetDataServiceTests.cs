@@ -1,5 +1,7 @@
 ﻿namespace WebScraper.Testbed.Tests.Services.Application
 {
+    using System;
+
     using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
@@ -9,14 +11,14 @@
     using WebScraper.Testbed.Services.Application;
 
     [TestClass]
-    public class MakeRequestServiceTests
+    public class ResetDataServiceTests
     {
         [TestMethod]
-        public void TestMakeRequest()
+        public void TestResetData()
         {
             // Arrange
             ILoggerFactory loggerFactory = new LoggerFactory();
-            ILogger<MakeRequestService> logger = loggerFactory.CreateLogger<MakeRequestService>();
+            ILogger<ResetDataService> logger = loggerFactory.CreateLogger<ResetDataService>();
 
             var sqliteMemoryConnection = new SqliteConnection("DataSource=:memory:");
             sqliteMemoryConnection.Open();
@@ -28,20 +30,41 @@
                 using (var dbContext = new WebScraperContext(dbContextOptionsBuilder.Options))
                 {
                     dbContext.Database.EnsureCreated();
-                    string url = "http://www.google.com";
-                    var service = new MakeRequestService(logger, dbContext);
+
+                    // Arrange
+                    var page = new Page
+                    {
+                        Url = "http://www.google.com",
+                        StartedAt = DateTime.UtcNow,
+                        Status = Status.Pending
+                    };
+                    dbContext.Pages.Add(page);
+
+                    PageLink pageLink = new PageLink
+                    {
+                        SourcePageId = 1,
+                        TargetPageId = 2
+                    };
+                    dbContext.PageLinks.Add(pageLink);
+
+                    Content content = new Content
+                    {
+                        Hash = "deadbeef12345678",
+                        Data = new byte[] { 1, 2, 3, 4, 5 }
+                    };
+                    dbContext.Content.Add(content);
+
+                    dbContext.SaveChanges();
+
+                    var service = new ResetDataService(logger, dbContext);
 
                     // Act
-                    service.MakeRequestAsync(url).Wait();
+                    service.ResetDataAsync().Wait();
 
                     // Assert
                     Assert.AreEqual(0, dbContext.Content.CountAsync().Result);
                     Assert.AreEqual(0, dbContext.PageLinks.CountAsync().Result);
-                    Assert.AreEqual(1, dbContext.Pages.CountAsync().Result);
-
-                    Page page = dbContext.Pages.FirstAsync().Result;
-                    Assert.AreEqual(url, page.Url);
-                    Assert.AreEqual(Status.Pending, page.Status);
+                    Assert.AreEqual(0, dbContext.Pages.CountAsync().Result);
                 }
             }
             finally
