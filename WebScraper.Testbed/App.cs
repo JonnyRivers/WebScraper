@@ -30,8 +30,8 @@
         {
             if (m_appConfiguration.Action == "reset")
             {
-                ResetAction action = m_serviceProvider.GetService<ResetAction>();
-                return action.RunAsync().Result;
+                IResetDataService service = m_serviceProvider.GetService<IResetDataService>();
+                service.ResetDataAsync().Wait();
             }
             else if (m_appConfiguration.Action == "make-request")
             {
@@ -101,8 +101,8 @@
 
             // Application services
             serviceCollection.AddTransient<IMakeRequestService, MakeRequestService>();
+            serviceCollection.AddTransient<IResetDataService, ResetDataService>();
 
-            serviceCollection.AddTransient<ResetAction>();
             serviceCollection.AddTransient<ServiceContentAction>();
             serviceCollection.AddTransient<ServiceRequestsAction>();
 
