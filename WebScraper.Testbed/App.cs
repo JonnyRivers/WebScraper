@@ -45,8 +45,16 @@
             }
             else if (m_appConfiguration.Action == "service-requests")
             {
-                ServiceRequestsAction action = m_serviceProvider.GetService<ServiceRequestsAction>();
-                return action.RunAsync().Result;
+                IProcessRequestService service = m_serviceProvider.GetService<IProcessRequestService>();
+                while (true)
+                {
+                    bool requestWasProcessed = service.ProcessRequestAsync().Result;
+                    if (!requestWasProcessed)
+                    {
+                        m_logger.LogInformation("No pending requests.  Sleeping.");
+                        System.Threading.Thread.Sleep(5000);
+                    }
+                }
             }
             else
             {
@@ -101,10 +109,10 @@
 
             // Application services
             serviceCollection.AddTransient<IMakeRequestService, MakeRequestService>();
+            serviceCollection.AddTransient<IProcessRequestService,ProcessRequestService>();
             serviceCollection.AddTransient<IResetDataService, ResetDataService>();
 
             serviceCollection.AddTransient<ServiceContentAction>();
-            serviceCollection.AddTransient<ServiceRequestsAction>();
 
             return serviceCollection.BuildServiceProvider();
         }

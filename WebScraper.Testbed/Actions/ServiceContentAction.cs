@@ -15,11 +15,11 @@
 
     internal class ServiceContentAction : IDisposable
     {
-        private readonly ILogger<ServiceRequestsAction> m_logger;
+        private readonly ILogger<ServiceContentAction> m_logger;
         private readonly IDataService m_dataService;
         private readonly IPageParseService m_pageParseService;
 
-        public ServiceContentAction(ILogger<ServiceRequestsAction> logger, IDataService dataService, IPageParseService pageParseService)
+        public ServiceContentAction(ILogger<ServiceContentAction> logger, IDataService dataService, IPageParseService pageParseService)
         {
             m_logger = logger;
             m_dataService = dataService;

@@ -6,6 +6,7 @@
     {
         public HttpClient Create()
         {
+            // TODO - should we log this?
             return new HttpClient();
         }
     }

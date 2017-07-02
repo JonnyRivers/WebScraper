@@ -5,6 +5,6 @@
 
     internal interface IProcessRequestService : IDisposable
     {
-        Task ProcessRequestAsync();
+        Task<bool> ProcessRequestAsync();
     }
 }
