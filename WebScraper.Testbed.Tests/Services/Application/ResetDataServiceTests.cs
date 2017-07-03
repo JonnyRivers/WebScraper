@@ -2,7 +2,6 @@
 {
     using System;
 
-    using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,56 +19,44 @@
             ILoggerFactory loggerFactory = new LoggerFactory();
             ILogger<ResetDataService> logger = loggerFactory.CreateLogger<ResetDataService>();
 
-            var sqliteMemoryConnection = new SqliteConnection("DataSource=:memory:");
-            sqliteMemoryConnection.Open();
-
-            try
+            using (var sqliteMemoryWrapper = new SqliteMemoryWrapper())
             {
-                var dbContextOptionsBuilder = new DbContextOptionsBuilder<WebScraperContext>()
-                    .UseSqlite(sqliteMemoryConnection);
-                using (var dbContext = new WebScraperContext(dbContextOptionsBuilder.Options))
+                WebScraperContext dbContext = sqliteMemoryWrapper.DbContext;
+
+                // Arrange
+                var page = new Page
                 {
-                    dbContext.Database.EnsureCreated();
+                    Url = "http://www.google.com",
+                    StartedAt = DateTime.UtcNow,
+                    Status = Status.Pending
+                };
+                dbContext.Pages.Add(page);
 
-                    // Arrange
-                    var page = new Page
-                    {
-                        Url = "http://www.google.com",
-                        StartedAt = DateTime.UtcNow,
-                        Status = Status.Pending
-                    };
-                    dbContext.Pages.Add(page);
+                PageLink pageLink = new PageLink
+                {
+                    SourcePageId = 1,
+                    TargetPageId = 2
+                };
+                dbContext.PageLinks.Add(pageLink);
 
-                    PageLink pageLink = new PageLink
-                    {
-                        SourcePageId = 1,
-                        TargetPageId = 2
-                    };
-                    dbContext.PageLinks.Add(pageLink);
+                Content content = new Content
+                {
+                    Hash = "deadbeef12345678",
+                    Data = new byte[] { 1, 2, 3, 4, 5 }
+                };
+                dbContext.Content.Add(content);
 
-                    Content content = new Content
-                    {
-                        Hash = "deadbeef12345678",
-                        Data = new byte[] { 1, 2, 3, 4, 5 }
-                    };
-                    dbContext.Content.Add(content);
+                dbContext.SaveChanges();
 
-                    dbContext.SaveChanges();
+                var service = new ResetDataService(logger, dbContext);
 
-                    var service = new ResetDataService(logger, dbContext);
+                // Act
+                service.ResetDataAsync().Wait();
 
-                    // Act
-                    service.ResetDataAsync().Wait();
-
-                    // Assert
-                    Assert.AreEqual(0, dbContext.Content.CountAsync().Result);
-                    Assert.AreEqual(0, dbContext.PageLinks.CountAsync().Result);
-                    Assert.AreEqual(0, dbContext.Pages.CountAsync().Result);
-                }
-            }
-            finally
-            {
-                sqliteMemoryConnection.Close();
+                // Assert
+                Assert.AreEqual(0, dbContext.Content.CountAsync().Result);
+                Assert.AreEqual(0, dbContext.PageLinks.CountAsync().Result);
+                Assert.AreEqual(0, dbContext.Pages.CountAsync().Result);
             }
         }
     }

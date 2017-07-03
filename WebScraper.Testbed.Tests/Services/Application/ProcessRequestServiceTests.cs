@@ -25,41 +25,29 @@
             IHttpClientService httpClientService = new HttpClientService();// TODO - fake this
             IHashService hashService = new MD5HashService(hashLogger);// TODO - fake this
 
-            // TODO - simplify the sqliteMemoryConnection setup to a single IDisposable object
-            var sqliteMemoryConnection = new SqliteConnection("DataSource=:memory:");
-            sqliteMemoryConnection.Open();
-
-            try
+            using (var sqliteMemoryWrapper = new SqliteMemoryWrapper())
             {
-                var dbContextOptionsBuilder = new DbContextOptionsBuilder<WebScraperContext>()
-                    .UseSqlite(sqliteMemoryConnection);
-                using (var dbContext = new WebScraperContext(dbContextOptionsBuilder.Options))
+                WebScraperContext dbContext = sqliteMemoryWrapper.DbContext;
+
+                var processRequestService = new ProcessRequestService(processRequestServiceLogger, dbContext, httpClientService, hashService);
+
+                var page = new Page
                 {
-                    dbContext.Database.EnsureCreated();
-                    var processRequestService = new ProcessRequestService(processRequestServiceLogger, dbContext, httpClientService, hashService);
+                    Url = "http://www.google.com",
+                    StartedAt = DateTime.UtcNow,
+                    Status = Status.Pending
+                };
+                dbContext.Pages.Add(page);
 
-                    var page = new Page
-                    {
-                        Url = "http://www.google.com",
-                        StartedAt = DateTime.UtcNow,
-                        Status = Status.Pending
-                    };
-                    dbContext.Pages.Add(page);
+                dbContext.SaveChanges();
 
-                    dbContext.SaveChanges();
+                // Act
+                processRequestService.ProcessRequestAsync().Wait();
 
-                    // Act
-                    processRequestService.ProcessRequestAsync().Wait();
-
-                    // Assert
-                    // TODO - ad more tests once we have faked this
-                    Assert.AreEqual(dbContext.Pages.FirstAsync().Result.ContentHash, dbContext.Content.FirstAsync().Result.Hash);
-                    Assert.AreEqual(1, dbContext.Content.CountAsync().Result);
-                }
-            }
-            finally
-            {
-                sqliteMemoryConnection.Close();
+                // Assert
+                // TODO - ad more tests once we have faked this
+                Assert.AreEqual(dbContext.Pages.FirstAsync().Result.ContentHash, dbContext.Content.FirstAsync().Result.Hash);
+                Assert.AreEqual(1, dbContext.Content.CountAsync().Result);
             }
         }
     }

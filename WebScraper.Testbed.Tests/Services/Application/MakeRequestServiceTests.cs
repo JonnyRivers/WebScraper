@@ -18,35 +18,24 @@
             ILoggerFactory loggerFactory = new LoggerFactory();
             ILogger<MakeRequestService> logger = loggerFactory.CreateLogger<MakeRequestService>();
 
-            var sqliteMemoryConnection = new SqliteConnection("DataSource=:memory:");
-            sqliteMemoryConnection.Open();
-
-            try
+            using (var sqliteMemoryWrapper = new SqliteMemoryWrapper())
             {
-                var dbContextOptionsBuilder = new DbContextOptionsBuilder<WebScraperContext>()
-                    .UseSqlite(sqliteMemoryConnection);
-                using (var dbContext = new WebScraperContext(dbContextOptionsBuilder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                    string url = "http://www.google.com";
-                    var service = new MakeRequestService(logger, dbContext);
+                WebScraperContext dbContext = sqliteMemoryWrapper.DbContext;
 
-                    // Act
-                    service.MakeRequestAsync(url).Wait();
+                string url = "http://www.google.com";
+                var service = new MakeRequestService(logger, dbContext);
 
-                    // Assert
-                    Assert.AreEqual(0, dbContext.Content.CountAsync().Result);
-                    Assert.AreEqual(0, dbContext.PageLinks.CountAsync().Result);
-                    Assert.AreEqual(1, dbContext.Pages.CountAsync().Result);
+                // Act
+                service.MakeRequestAsync(url).Wait();
 
-                    Page page = dbContext.Pages.FirstAsync().Result;
-                    Assert.AreEqual(url, page.Url);
-                    Assert.AreEqual(Status.Pending, page.Status);
-                }
-            }
-            finally
-            {
-                sqliteMemoryConnection.Close();
+                // Assert
+                Assert.AreEqual(0, dbContext.Content.CountAsync().Result);
+                Assert.AreEqual(0, dbContext.PageLinks.CountAsync().Result);
+                Assert.AreEqual(1, dbContext.Pages.CountAsync().Result);
+
+                Page page = dbContext.Pages.FirstAsync().Result;
+                Assert.AreEqual(url, page.Url);
+                Assert.AreEqual(Status.Pending, page.Status);
             }
         }
     }
