@@ -1,1 +1,1 @@
-dotnet run --action request --url http://www.google.com
+dotnet run --action make-request --url http://www.google.com

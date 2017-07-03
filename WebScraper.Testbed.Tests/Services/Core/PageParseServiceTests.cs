@@ -1,4 +1,4 @@
-namespace WebScraper.Testbed.Tests.Services
+namespace WebScraper.Testbed.Tests.Services.Core
 {
     using System.IO;
     using System.Linq;
@@ -6,7 +6,7 @@ namespace WebScraper.Testbed.Tests.Services
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    using WebScraper.Testbed.Services;
+    using WebScraper.Testbed.Services.Core;
 
     [TestClass]
     public class PageParseServiceTests
@@ -15,7 +15,7 @@ namespace WebScraper.Testbed.Tests.Services
         public void TestParseGuardian()
         {
             ILoggerFactory loggerFactory = new LoggerFactory();
-            ILogger<MD5HashService> logger = loggerFactory.CreateLogger<MD5HashService>();
+            ILogger<PageParseService> logger = loggerFactory.CreateLogger<PageParseService>();
 
             using (FileStream guardianContentStream = File.OpenRead("Guardian-2017-06-18.html"))
             {
