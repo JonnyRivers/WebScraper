@@ -39,27 +39,27 @@
             }
             else if (m_appConfiguration.Action == "service-content")
             {
-                IProcessContentService service = m_serviceProvider.GetService<IProcessContentService>();
                 while (true)
                 {
+                    IProcessContentService service = m_serviceProvider.GetService<IProcessContentService>();
                     bool requestWasProcessed = service.ProcessContentAsync().Result;
                     if (!requestWasProcessed)
                     {
                         m_logger.LogInformation("No pending content.  Sleeping.");
-                        System.Threading.Thread.Sleep(5000);
+                        System.Threading.Thread.Sleep(1000);
                     }
                 }
             }
             else if (m_appConfiguration.Action == "service-requests")
             {
-                IProcessRequestService service = m_serviceProvider.GetService<IProcessRequestService>();
                 while (true)
                 {
+                    IProcessRequestService service = m_serviceProvider.GetService<IProcessRequestService>();
                     bool requestWasProcessed = service.ProcessRequestAsync().Result;
                     if (!requestWasProcessed)
                     {
                         m_logger.LogInformation("No pending requests.  Sleeping.");
-                        System.Threading.Thread.Sleep(5000);
+                        System.Threading.Thread.Sleep(1000);
                     }
                 }
             }

@@ -48,6 +48,13 @@
                 return false;
             }
 
+            if (nextPage.Status != Status.Pending)
+            {
+                m_logger.LogInformation("A page was returned with a status of {nextPage.Status}.  Unable to process.");
+
+                return false;
+            }
+
             nextPage.StartedAt = DateTime.UtcNow;
             nextPage.Status = Status.Downloading;
 
@@ -87,7 +94,7 @@
                         m_logger.LogInformation($"Content record for {nextPage.Url} with hash {contentRecord.Hash} already exists");
                     }
 
-                    nextPage.CompletedAt = DateTime.UtcNow;
+                    nextPage.DownloadedAt = DateTime.UtcNow;
                     nextPage.ContentHash = contentRecord.Hash;
                     nextPage.Status = Status.Downloaded;
 
@@ -112,7 +119,7 @@
 
         private async Task UpdatePageFailedAsync(Page page)
         {
-            page.CompletedAt = DateTime.UtcNow;
+            page.DownloadedAt = DateTime.UtcNow;
             page.Status = Status.DownloadFailed;
 
             await m_dbContext.SaveChangesAsync();

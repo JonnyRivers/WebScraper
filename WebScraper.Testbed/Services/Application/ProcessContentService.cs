@@ -37,12 +37,20 @@
         public async Task<bool> ProcessContentAsync()
         {
             m_logger.LogInformation("Finding next available downloaded page.");
+
             Page nextPage = await m_dbContext.Pages
                 .FirstOrDefaultAsync(x => x.Status == Status.Downloaded);
-
+            
             if (nextPage == null)
             {
                 m_logger.LogInformation("No pages are available to process.");
+
+                return false;
+            }
+
+            if (nextPage.Status != Status.Downloaded)
+            {
+                m_logger.LogInformation($"A page was returned with a status of {nextPage.Status}.  Unable to process.");
 
                 return false;
             }
@@ -54,7 +62,7 @@
 
             try
             {
-                m_logger.LogInformation($"Parsing content from {nextPage.Url}");
+                m_logger.LogInformation($"Parsing content from '{nextPage.Url}' with hash '{nextPage.ContentHash}'");
 
                 Content contentRecord = await m_dbContext.Content.FirstOrDefaultAsync(x => x.Hash == nextPage.ContentHash);
                 if (contentRecord == null)
@@ -68,6 +76,9 @@
 
                     List<Page> pages = await m_dbContext.Pages.ToListAsync();
                     Dictionary<string, Page> pagesByUrl = pages.ToDictionary(p => p.Url, p => p);
+
+                    // TODO - the most efficient way is to add all pages, save, add all links, save
+                    // for now we are just saving after each page add, which is simpler
 
                     foreach (WebPageLink link in webPageContent.Links)
                     {
@@ -92,6 +103,8 @@
                             };
                             await m_dbContext.Pages.AddAsync(page);
 
+                            await m_dbContext.SaveChangesAsync();
+
                             var pageLink = new PageLink
                             {
                                 SourcePageId = nextPage.PageId,
@@ -102,7 +115,7 @@
                     }
                 }
 
-                nextPage.CompletedAt = DateTime.UtcNow;
+                nextPage.ParsedAt = DateTime.UtcNow;
                 nextPage.Status = Status.Parsed;
 
                 await m_dbContext.SaveChangesAsync();
@@ -111,7 +124,7 @@
             {
                 m_logger.LogError(ex.ToString());
 
-                nextPage.CompletedAt = DateTime.UtcNow;
+                nextPage.ParsedAt = DateTime.UtcNow;
                 nextPage.Status = Status.ParseFailed;
 
                 await m_dbContext.SaveChangesAsync();

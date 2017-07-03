@@ -51,7 +51,8 @@
 
                 page.ContentHash = string.Empty;
                 page.StartedAt = null;
-                page.CompletedAt = null;
+                page.DownloadedAt = null;
+                page.ParsedAt = null;
                 page.Status = Status.Pending;
 
                 await m_dbContext.SaveChangesAsync();

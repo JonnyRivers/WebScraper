@@ -36,7 +36,7 @@
                     Url = "http://www.google.com",
                     StartedAt = DateTime.UtcNow,
                     Status = Status.Downloaded,
-                    CompletedAt = DateTime.UtcNow,
+                    DownloadedAt = DateTime.UtcNow,
                     ContentHash = "1234567812345678"
                 };
                 dbContext.Pages.Add(page);
