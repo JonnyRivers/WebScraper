@@ -15,7 +15,7 @@ namespace WebScraper.Testbed.Tests.Services.Core
         public void TestParseGuardian()
         {
             ILoggerFactory loggerFactory = new LoggerFactory();
-            ILogger<MD5HashService> logger = loggerFactory.CreateLogger<MD5HashService>();
+            ILogger<PageParseService> logger = loggerFactory.CreateLogger<PageParseService>();
 
             using (FileStream guardianContentStream = File.OpenRead("Guardian-2017-06-18.html"))
             {

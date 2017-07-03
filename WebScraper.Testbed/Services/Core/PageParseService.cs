@@ -11,9 +11,9 @@
 
     public class PageParseService : IPageParseService
     {
-        private readonly ILogger<MD5HashService> m_logger;
+        private readonly ILogger<PageParseService> m_logger;
 
-        public PageParseService(ILogger<MD5HashService> logger)
+        public PageParseService(ILogger<PageParseService> logger)
         {
             m_logger = logger;
         }

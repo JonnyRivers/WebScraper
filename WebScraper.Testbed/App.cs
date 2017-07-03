@@ -8,7 +8,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.EntityFrameworkCore;
 
-    using Actions;
     using Data;
     using Services.Core;
     using Services.Application;
@@ -40,8 +39,16 @@
             }
             else if (m_appConfiguration.Action == "service-content")
             {
-                ServiceContentAction action = m_serviceProvider.GetService<ServiceContentAction>();
-                return action.RunAsync().Result;
+                IProcessContentService service = m_serviceProvider.GetService<IProcessContentService>();
+                while (true)
+                {
+                    bool requestWasProcessed = service.ProcessContentAsync().Result;
+                    if (!requestWasProcessed)
+                    {
+                        m_logger.LogInformation("No pending content.  Sleeping.");
+                        System.Threading.Thread.Sleep(5000);
+                    }
+                }
             }
             else if (m_appConfiguration.Action == "service-requests")
             {
@@ -102,17 +109,15 @@
                 options => options.UseSqlServer(WebScraperContextFactory.ConnectionString));
 
             // Core services
-            serviceCollection.AddTransient<IDataService, EFDataService>();
             serviceCollection.AddTransient<IHashService, MD5HashService>();
             serviceCollection.AddTransient<IHttpClientService, HttpClientService>();
             serviceCollection.AddTransient<IPageParseService, PageParseService>();
 
             // Application services
             serviceCollection.AddTransient<IMakeRequestService, MakeRequestService>();
+            serviceCollection.AddTransient<IProcessContentService, ProcessContentService>();
             serviceCollection.AddTransient<IProcessRequestService,ProcessRequestService>();
             serviceCollection.AddTransient<IResetDataService, ResetDataService>();
-
-            serviceCollection.AddTransient<ServiceContentAction>();
 
             return serviceCollection.BuildServiceProvider();
         }
