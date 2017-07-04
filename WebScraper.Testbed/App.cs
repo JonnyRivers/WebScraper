@@ -106,7 +106,8 @@
             serviceCollection.AddSingleton(loggerFactory);
             serviceCollection.AddLogging();
             serviceCollection.AddDbContext<WebScraperContext>(
-                options => options.UseSqlServer(WebScraperContextFactory.ConnectionString));
+                options => options.UseSqlServer(WebScraperContextFactory.ConnectionString),
+                ServiceLifetime.Transient);
 
             // Core services
             serviceCollection.AddTransient<IHashService, MD5HashService>();
