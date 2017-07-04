@@ -8,7 +8,7 @@
 
     public class ResetDataService : IResetDataService
     {
-        private readonly ILogger<ResetDataService> m_logger;
+        private readonly ILogger m_logger;
         private readonly WebScraperContext m_dbContext;
 
         public ResetDataService(ILogger<ResetDataService> logger, WebScraperContext dbContext)

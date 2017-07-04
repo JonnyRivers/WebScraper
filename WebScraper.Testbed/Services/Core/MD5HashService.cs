@@ -7,7 +7,7 @@
 
     public class MD5HashService : IHashService
     {
-        private readonly ILogger<MD5HashService> m_logger;
+        private readonly ILogger m_logger;
 
         public MD5HashService(ILogger<MD5HashService> logger)
         {

@@ -10,7 +10,7 @@
 
     public class MakeRequestService : IMakeRequestService
     {
-        private readonly ILogger<MakeRequestService> m_logger;
+        private readonly ILogger m_logger;
         private readonly WebScraperContext m_dbContext;
 
         public MakeRequestService(ILogger<MakeRequestService> logger, WebScraperContext dbContext)

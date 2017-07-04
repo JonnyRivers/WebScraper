@@ -12,7 +12,7 @@
 
     public class ProcessRequestService : IProcessRequestService
     {
-        private readonly ILogger<ProcessRequestService> m_logger;
+        private readonly ILogger m_logger;
         private readonly WebScraperContext m_dbContext;
         private readonly IHttpClientService m_httpClientService;
         private readonly IHashService m_hashService;

@@ -15,7 +15,7 @@
 
     public class ProcessContentService : IProcessContentService
     {
-        private readonly ILogger<ProcessContentService> m_logger;
+        private readonly ILogger m_logger;
         private readonly WebScraperContext m_dbContext;
         private readonly IPageParseService m_pageParseService;
 

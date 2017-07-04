@@ -11,7 +11,7 @@
 
     public class PageParseService : IPageParseService
     {
-        private readonly ILogger<PageParseService> m_logger;
+        private readonly ILogger m_logger;
 
         public PageParseService(ILogger<PageParseService> logger)
         {
