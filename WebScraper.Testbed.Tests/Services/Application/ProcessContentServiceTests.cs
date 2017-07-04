@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
 
     using Microsoft.EntityFrameworkCore;
@@ -55,9 +56,11 @@
                 dbContext.SaveChanges();
 
                 // Act
-                processContentService.ProcessContentAsync().Wait();
+                bool serviceProcessResult = processContentService.ProcessContentAsync().Result;
 
                 // Assert
+                Assert.IsTrue(serviceProcessResult);
+
                 List<Content> contentRecords = dbContext.Content.ToListAsync().Result;
                 List<Page> pages = dbContext.Pages.ToListAsync().Result;
                 List<PageLink> pageLinks = dbContext.PageLinks.ToListAsync().Result;
@@ -163,12 +166,15 @@
                 dbContext.SaveChanges();
 
                 // Act
+                bool[] serviceCallResults = new bool[3];
                 for (int i = 0; i < 3; ++i)
                 {
-                    processContentService.ProcessContentAsync().Wait();
+                    serviceCallResults[i] = processContentService.ProcessContentAsync().Result;
                 }
 
                 // Assert
+
+                Assert.IsTrue(serviceCallResults.All(x => x));
 
                 // page1<--->page2
                 //    \
