@@ -1,6 +1,5 @@
 ﻿namespace WebScraper.Testbed.Tests.Services.Application
 {
-    using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;

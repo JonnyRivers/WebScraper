@@ -30,5 +30,23 @@ namespace WebScraper.Testbed.Tests.Services.Core
                 Assert.AreEqual(@"https://subscribe.theguardian.com/us?INTCMP=NGW_FOOTER_US_GU_SUBSCRIBE", webPageContent.Links.Last().Value);
             }
         }
+
+        [TestMethod]
+        public void TestParseImage()
+        {
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            ILogger<PageParseService> logger = loggerFactory.CreateLogger<PageParseService>();
+
+            using (FileStream guardianContentStream = File.OpenRead("TestImage.png"))
+            {
+                var pageParseService = new PageParseService(logger);
+                Content.WebPageContent webPageContent = pageParseService.ParseWebPage(guardianContentStream);
+
+                // Check parsed content
+                Assert.IsNotNull(webPageContent);
+                Assert.IsNotNull(webPageContent.Links);
+                Assert.AreEqual(0, webPageContent.Links.Count());
+            }
+        }
     }
 }
