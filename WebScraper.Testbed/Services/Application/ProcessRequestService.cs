@@ -48,13 +48,6 @@
                 return false;
             }
 
-            if (nextPage.Status != Status.Pending)
-            {
-                m_logger.LogInformation("A page was returned with a status of {nextPage.Status}.  Unable to process.");
-
-                return false;
-            }
-
             nextPage.StartedAt = DateTime.UtcNow;
             nextPage.Status = Status.Downloading;
 
