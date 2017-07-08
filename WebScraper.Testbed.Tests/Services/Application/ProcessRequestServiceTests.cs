@@ -1,8 +1,9 @@
 ﻿namespace WebScraper.Testbed.Tests.Services.Application
 {
     using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
 
-    using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,6 +11,8 @@
     using WebScraper.Testbed.Data;
     using WebScraper.Testbed.Services.Application;
     using WebScraper.Testbed.Services.Core;
+
+    using TestServices;
 
     [TestClass]
     public class ProcessRequestServiceTests
@@ -19,11 +22,24 @@
         {
             // Arrange
             ILoggerFactory loggerFactory = new LoggerFactory();
-            ILogger<MD5HashService> hashLogger = loggerFactory.CreateLogger<MD5HashService>();
             ILogger<ProcessRequestService> processRequestServiceLogger = loggerFactory.CreateLogger<ProcessRequestService>();
 
-            IHttpClientService httpClientService = new HttpClientService();// TODO - fake this
-            IHashService hashService = new MD5HashService(hashLogger);// TODO - fake this
+            string url = "http://www.google.com/";
+            string responseText = "mock response";
+            var response = new HttpResponseMessage
+            {
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Content = new StringContent(responseText)
+            };
+            var mockedResponsesByRequestUri = new Dictionary<string, HttpResponseMessage>()
+            {
+                { url, response }
+            };
+            HttpClientHandler httpClientHandler = new MockHttpClientHandler(mockedResponsesByRequestUri);
+            IHttpClientService httpClientService = new MockHttpClientService(httpClientHandler);
+
+            string dummyHash = "0123456789abcdef";
+            IHashService hashService = new FakeHashService(dummyHash);
 
             using (var sqliteMemoryWrapper = new SqliteMemoryWrapper())
             {
@@ -33,7 +49,7 @@
 
                 var page = new Page
                 {
-                    Url = "http://www.google.com",
+                    Url = url,
                     StartedAt = DateTime.UtcNow,
                     Status = Status.Pending
                 };
@@ -45,9 +61,17 @@
                 processRequestService.ProcessRequestAsync().Wait();
 
                 // Assert
-                // TODO - ad more tests once we have faked this
-                Assert.AreEqual(dbContext.Pages.FirstAsync().Result.ContentHash, dbContext.Content.FirstAsync().Result.Hash);
-                Assert.AreEqual(1, dbContext.Content.CountAsync().Result);
+                List<Page> pages = dbContext.Pages.ToListAsync().Result;
+
+                Assert.AreEqual(1, pages.Count);
+                Assert.AreEqual(Status.Downloaded, pages[0].Status);
+                Assert.AreEqual(dummyHash, pages[0].ContentHash);
+
+                List<Content> contentRecords = dbContext.Content.ToListAsync().Result;
+
+                Assert.AreEqual(1, contentRecords.Count);
+                Assert.AreEqual(dummyHash, contentRecords[0].Hash);
+                Assert.AreEqual(responseText, System.Text.Encoding.UTF8.GetString(contentRecords[0].Data));
             }
         }
     }
