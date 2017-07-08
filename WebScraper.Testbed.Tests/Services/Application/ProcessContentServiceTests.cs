@@ -207,5 +207,69 @@
                 Assert.AreEqual(pages[0].PageId, pageLinks[2].TargetPageId);
             }
         }
+
+        [TestMethod]
+        [Ignore]
+        public void TestProcessContentPerformance()
+        {
+            // Arrange
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            ILogger<PageParseService> pageParseServiceLogger = loggerFactory.CreateLogger<PageParseService>();
+            ILogger<ProcessContentService> processContentServiceLogger = loggerFactory.CreateLogger<ProcessContentService>();
+
+            IPageParseService pageParseService = new PageParseService(pageParseServiceLogger);
+
+            using (var sqliteMemoryWrapper = new SqliteMemoryWrapper())
+            {
+                WebScraperContext dbContext = sqliteMemoryWrapper.DbContext;
+
+                var processContentService = new ProcessContentService(processContentServiceLogger, dbContext, pageParseService);
+
+                int numPages = 100;
+                int numLinks = 100;
+                for (int pageIndex = 0; pageIndex < numPages; ++pageIndex)
+                {
+                    var page = new Page
+                    {
+                        Url = $"http://www.jonnyrivers.com/{pageIndex}",
+                        StartedAt = DateTime.UtcNow,
+                        Status = Status.Downloaded,
+                        DownloadedAt = DateTime.UtcNow,
+                        ContentHash = pageIndex.ToString()
+                    };
+
+                    dbContext.Pages.Add(page);
+
+                    StringBuilder contentBuilder = new StringBuilder();
+                    contentBuilder.AppendLine("<!DOCTYPE html>");
+                    
+                    for (int linkIndex = 0; linkIndex < numLinks; ++linkIndex)
+                    {
+                        contentBuilder.AppendLine($"<link href=\"http://www.jonnyrivers.com/{pageIndex}/{linkIndex}\" />");
+                    }
+                    var pageContent = new Content
+                    {
+                        Hash = page.ContentHash,
+                        Data = Encoding.ASCII.GetBytes(contentBuilder.ToString())
+                    };
+                    dbContext.Content.Add(pageContent);
+                }
+
+                dbContext.SaveChanges();
+
+                // Act
+                bool[] serviceCallResults = new bool[numPages];
+                for (int pageIndex = 0; pageIndex < numPages; ++pageIndex)
+                {
+                    serviceCallResults[pageIndex] = processContentService.ProcessContentAsync().Result;
+                }
+
+                // Assert
+                Assert.IsTrue(serviceCallResults.All(x => x));
+                Assert.AreEqual(numPages + numPages * numLinks, dbContext.Pages.CountAsync().Result);
+                Assert.AreEqual(numPages * numLinks, dbContext.PageLinks.CountAsync().Result);
+                Assert.AreEqual(numPages, dbContext.Content.CountAsync().Result);
+            }
+        }
     }
 }

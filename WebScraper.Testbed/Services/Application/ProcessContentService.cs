@@ -67,44 +67,48 @@
                 {
                     WebPageContent webPageContent = m_pageParseService.ParseWebPage(contentStream);
 
-                    List<Page> pages = await m_dbContext.Pages.ToListAsync();
-                    Dictionary<string, Page> pagesByUrl = pages.ToDictionary(p => p.Url, p => p);
+                    // For performance reasons we do two passes
+                    // One transactions per pass
 
-                    // TODO - the most efficient way is to add all pages, save, add all links, save
-                    // for now we are just saving after each page add, which is simpler
-
+                    // Pass 1 - create pages
+                    var linkedPagesByUrl = new Dictionary<string, Page>();
+                    bool pagesAdded = false;
                     foreach (WebPageLink link in webPageContent.Links)
                     {
-                        // TODO - account for casing in URL
-                        if (pagesByUrl.ContainsKey(link.Value))
+                        Page linkedPage = await m_dbContext.Pages.FirstOrDefaultAsync(p => p.Url == link.Value);
+
+                        if(linkedPage == null)
                         {
-                            var pageLink = new PageLink
-                            {
-                                SourcePageId = nextPage.PageId,
-                                TargetPageId = pagesByUrl[link.Value].PageId
-                            };
-                            await m_dbContext.PageLinks.AddAsync(pageLink);
-                        }
-                        else
-                        {
-                            var page = new Page
+                            linkedPage = new Page
                             {
                                 Url = link.Value,
                                 Status = Status.Pending,
                                 RequestedAt = DateTime.UtcNow,
                                 ContentHash = String.Empty
                             };
-                            await m_dbContext.Pages.AddAsync(page);
+                            await m_dbContext.Pages.AddAsync(linkedPage);
 
-                            await m_dbContext.SaveChangesAsync();
-
-                            var pageLink = new PageLink
-                            {
-                                SourcePageId = nextPage.PageId,
-                                TargetPageId = page.PageId
-                            };
-                            await m_dbContext.PageLinks.AddAsync(pageLink);
+                            pagesAdded = true;
                         }
+
+                        linkedPagesByUrl.Add(link.Value, linkedPage);
+                    }
+
+                    if(pagesAdded)
+                    {
+                        // Have the db generate page IDs for new pages
+                        await m_dbContext.SaveChangesAsync();
+                    }
+
+                    // Pass 2 - create links to new pages
+                    foreach (WebPageLink link in webPageContent.Links)
+                    {
+                        var pageLink = new PageLink
+                        {
+                            SourcePageId = nextPage.PageId,
+                            TargetPageId = linkedPagesByUrl[link.Value].PageId
+                        };
+                        await m_dbContext.PageLinks.AddAsync(pageLink);
                     }
                 }
 
