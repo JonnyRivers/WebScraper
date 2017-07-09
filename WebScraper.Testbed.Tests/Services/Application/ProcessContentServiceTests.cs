@@ -13,6 +13,8 @@
     using WebScraper.Testbed.Services.Application;
     using WebScraper.Testbed.Services.Core;
 
+    using Infrastructure;
+
     [TestClass]
     public class ProcessContentServiceTests
     {

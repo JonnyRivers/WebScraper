@@ -1,4 +1,4 @@
-﻿namespace WebScraper.Testbed.Tests
+﻿namespace WebScraper.Testbed.Tests.Infrastructure
 {
     using System;
 

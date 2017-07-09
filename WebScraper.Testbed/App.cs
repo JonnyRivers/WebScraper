@@ -43,6 +43,17 @@
                 {
                     IProcessContentService service = m_serviceProvider.GetService<IProcessContentService>();
                     bool requestWasProcessed = service.ProcessContentAsync().Result;
+
+                    // TODO - fix code duplication here
+                    if (Console.KeyAvailable)
+                    {
+                        ConsoleKeyInfo keyInfo = Console.ReadKey();
+                        if (keyInfo.Key == ConsoleKey.Q)
+                        {
+                            return 0;
+                        }
+                    }
+
                     if (!requestWasProcessed)
                     {
                         m_logger.LogInformation("No pending content.  Sleeping.");
@@ -56,6 +67,16 @@
                 {
                     IProcessRequestService service = m_serviceProvider.GetService<IProcessRequestService>();
                     bool requestWasProcessed = service.ProcessRequestAsync().Result;
+
+                    if(Console.KeyAvailable)
+                    {
+                        ConsoleKeyInfo keyInfo = Console.ReadKey();
+                        if(keyInfo.Key == ConsoleKey.Q)
+                        {
+                            return 0;
+                        }
+                    }
+
                     if (!requestWasProcessed)
                     {
                         m_logger.LogInformation("No pending requests.  Sleeping.");

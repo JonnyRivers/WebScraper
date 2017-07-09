@@ -9,6 +9,8 @@
     using WebScraper.Testbed.Data;
     using WebScraper.Testbed.Services.Application;
 
+    using Infrastructure;
+
     [TestClass]
     public class ResetDataServiceTests
     {

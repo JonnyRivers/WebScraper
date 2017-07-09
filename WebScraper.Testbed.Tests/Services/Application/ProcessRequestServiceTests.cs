@@ -12,6 +12,7 @@
     using WebScraper.Testbed.Services.Application;
     using WebScraper.Testbed.Services.Core;
 
+    using Infrastructure;
     using TestServices;
 
     [TestClass]
