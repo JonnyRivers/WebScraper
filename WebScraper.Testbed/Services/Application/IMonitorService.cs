@@ -3,8 +3,8 @@
     using System;
     using System.Threading.Tasks;
 
-    internal interface IProcessContentService : IDisposable
+    interface IMonitorService : IDisposable
     {
-        Task<bool> ProcessContentAsync();
+        void Report();
     }
 }

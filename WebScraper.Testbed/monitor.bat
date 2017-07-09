@@ -1,0 +1,1 @@
+dotnet run --action monitor

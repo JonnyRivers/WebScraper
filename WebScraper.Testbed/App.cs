@@ -84,6 +84,25 @@
                     }
                 }
             }
+            else if (m_appConfiguration.Action == "monitor")
+            {
+                while (true)
+                {
+                    IMonitorService service = m_serviceProvider.GetService<IMonitorService>();
+                    service.Report();
+
+                    if (Console.KeyAvailable)
+                    {
+                        ConsoleKeyInfo keyInfo = Console.ReadKey();
+                        if (keyInfo.Key == ConsoleKey.Q)
+                        {
+                            return 0;
+                        }
+                    }
+
+                    System.Threading.Thread.Sleep(5000);
+                }
+            }
             else
             {
                 m_logger.LogError($"Unrecognized action '{m_appConfiguration.Action}'");
@@ -124,8 +143,12 @@
 
             // .NET Services
             ILoggerFactory loggerFactory = new LoggerFactory().AddConsole().AddDebug();
-            serviceCollection.AddSingleton(loggerFactory);
-            serviceCollection.AddLogging();
+            if(m_appConfiguration.Action != "report")// TODO - fix this terrible hack
+            {
+                serviceCollection.AddSingleton(loggerFactory);
+                serviceCollection.AddLogging();
+            }
+            
             serviceCollection.AddDbContext<WebScraperContext>(
                 options => options.UseSqlServer(WebScraperContextFactory.ConnectionString),
                 ServiceLifetime.Transient);
@@ -140,6 +163,7 @@
             serviceCollection.AddTransient<IProcessContentService, ProcessContentService>();
             serviceCollection.AddTransient<IProcessRequestService,ProcessRequestService>();
             serviceCollection.AddTransient<IResetDataService, ResetDataService>();
+            serviceCollection.AddTransient<IMonitorService, MonitorService>();
 
             return serviceCollection.BuildServiceProvider();
         }
