@@ -103,6 +103,11 @@
                     System.Threading.Thread.Sleep(5000);
                 }
             }
+            else if (m_appConfiguration.Action == "graphml")
+            {
+                IGraphMLService service = m_serviceProvider.GetService<IGraphMLService>();
+                service.GenerateGraph(m_appConfiguration.Path);
+            }
             else
             {
                 m_logger.LogError($"Unrecognized action '{m_appConfiguration.Action}'");
@@ -124,7 +129,9 @@
                 {"--action", "Action"},
                 {"-a", "Action"},
                 {"--url", "Url"},
-                {"-u", "Url"}
+                {"-u", "Url"},
+                {"--path", "Path"},
+                {"-p", "Path"}
             };
 
             var configurationBuilder = new ConfigurationBuilder();
@@ -164,6 +171,7 @@
             serviceCollection.AddTransient<IProcessRequestService,ProcessRequestService>();
             serviceCollection.AddTransient<IResetDataService, ResetDataService>();
             serviceCollection.AddTransient<IMonitorService, MonitorService>();
+            serviceCollection.AddTransient<IGraphMLService, GraphMLService>();
 
             return serviceCollection.BuildServiceProvider();
         }
